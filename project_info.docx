@@ -1,0 +1,212 @@
+📄 Project Report: PDF Question Answering System (Offline)
+1. Project Overview
+
+This project implements a PDF-based Question Answering system that allows users to:
+
+Upload a PDF document
+
+Ask natural language questions about the content
+
+Receive answers generated strictly from the PDF
+
+Run completely offline using a locally hosted LLM
+
+The system uses Retrieval-Augmented Generation (RAG) instead of fine-tuning, making it lightweight, fast to build, and scalable.
+
+2. Why This Project?
+
+Traditional LLMs:
+
+Cannot read custom PDFs directly
+
+Hallucinate answers without grounding
+
+Require internet access
+
+This project solves those problems by:
+
+Extracting text from PDFs
+
+Converting text into vector embeddings
+
+Retrieving only relevant content
+
+Passing that content to a local LLM for accurate answers
+
+3. What We Built (High-Level)
+Core Components:
+
+PDF Text Extraction
+
+Text Chunking
+
+Vector Embeddings
+
+Vector Database (ChromaDB)
+
+Local LLM Inference (Ollama + LLaMA3)
+
+Command-Line Q&A
+
+Web UI using Streamlit
+
+4. Architecture (How It Works)
+PDF → Text Extraction → Chunking
+     → Embeddings → ChromaDB (Vector Store)
+User Question → Embedding → Similarity Search
+              → Relevant Context
+              → LLaMA 3 (Ollama)
+              → Final Answer
+
+
+This is a classic RAG pipeline.
+
+5. File-by-File Explanation
+🔹 extract_pdf.py
+Purpose
+
+Reads a PDF file
+
+Splits text into overlapping chunks
+
+Generates embeddings
+
+Stores them in ChromaDB
+
+Why It Exists
+
+Separates data preparation from querying
+
+Allows preprocessing once and reuse later
+
+What It Does
+
+Uses PyMuPDF (fitz) to extract text
+
+Uses SentenceTransformers to create embeddings
+
+Stores vectors persistently in chroma_db
+
+🔹 ask_pdf.py
+Purpose
+
+Command-line interface to ask questions from the PDF
+
+Why It Exists
+
+Simple, minimal testing tool
+
+Useful for debugging retrieval and LLM responses
+
+What It Does
+
+Loads stored embeddings
+
+Converts user query into a vector
+
+Retrieves top relevant chunks
+
+Sends context + question to LLaMA3 via Ollama
+
+Prints the answer
+
+🔹 app.py (Streamlit UI)
+Purpose
+
+Provides a user-friendly web interface
+
+Why It Exists
+
+Non-technical users can interact easily
+
+Enables PDF upload + live Q&A
+
+What It Does
+
+Uploads PDF through UI
+
+Extracts and embeds text dynamically
+
+Clears old vectors before storing new ones
+
+Accepts user questions
+
+Retrieves relevant chunks
+
+Displays LLM-generated answers
+
+6. Technologies Used
+Technology	Purpose
+Python	Core programming language
+PyMuPDF	PDF text extraction
+SentenceTransformers	Text embeddings
+ChromaDB	Vector database
+Ollama	Local LLM runtime
+LLaMA 3	Answer generation
+Streamlit	Web UI
+7. Key Design Decisions
+✅ Why RAG instead of Fine-Tuning?
+
+Faster to build
+
+No training cost
+
+Works with any PDF
+
+Easily updatable
+
+✅ Why Local LLM (Ollama)?
+
+Fully offline
+
+No API cost
+
+Data privacy
+
+Works without internet
+
+8. Current Capabilities
+
+✅ Offline execution
+
+✅ Accurate, context-grounded answers
+
+✅ Supports any PDF
+
+✅ CLI + Web UI
+
+✅ Persistent vector storage
+
+9. Limitations (Current Version)
+
+No user authentication
+
+No chat history
+
+No voice input
+
+No multi-PDF support
+
+Single-user setup
+
+(These were intentionally not added to keep the project stable and simple.)
+
+10. Possible Future Improvements
+
+Chat history memory
+
+Voice input (speech-to-text)
+
+Multi-PDF support
+
+Login & user sessions
+
+Mobile-friendly frontend
+
+Cloud deployment
+
+Hybrid search (keyword + vector)
+
+Streaming LLM responses
+
+PDF highlighting for answers
